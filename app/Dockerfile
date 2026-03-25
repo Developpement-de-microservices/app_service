@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 WORKDIR /app_service
-COPY . .
+COPY .. .
 RUN pip install -r requirements.txt
-EXPOSE 5000
+EXPOSE 5001
 CMD ["python", "app.py"]
