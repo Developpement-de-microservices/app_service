@@ -48,7 +48,7 @@ def post_apps():
 
     return jsonify({
         "id": new_id,
-        "message": "Point d'accès ajouté avec succès"
+        "message": "Application ajoutée avec succès"
     }), 201
 
 
@@ -96,10 +96,10 @@ def put_app(app_id):
     save_apps(apps)
     return jsonify({
         "id": app_id,
-        "message": "Point d'accès modifié",
+        "message": "Application modifiée",
         "app": apps[app_id]
     }), 200
 
 
 if __name__ == '__main__':
-    server.run(host='0.0.0.0', port=5000, debug=True)
+    server.run(host='0.0.0.0', port=5001, debug=True)
