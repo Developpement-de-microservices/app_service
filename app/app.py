@@ -8,23 +8,33 @@ import json
 server = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_FILE = os.path.join(BASE_DIR, 'data.json')
+APPS_DB_FILE = os.path.join(BASE_DIR, 'apps.json')
+VERSIONS_DB_FILE = os.path.join(BASE_DIR, 'versions.json')
 
-
-def open_apps_data():
+def open_apps_db():
     try:
-        with open(DB_FILE, 'r') as f:
+        with open(APPS_DB_FILE, 'r') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
+def save_apps_db(app_dict):
+    with open(APPS_DB_FILE, 'w') as f:
+        json.dump(app_dict, f, indent=4)
 
-def save_apps(app_dict):
-    with open(DB_FILE, 'w') as f:
+def open_versions_db():
+    try:
+        with open(VERSIONS_DB_FILE, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def save_versions_db(app_dict):
+    with open(VERSIONS_DB_FILE, 'w') as f:
         json.dump(app_dict, f, indent=4)
 
 def get_unique_uuid():
-    apps = open_apps_data()
+    apps = open_apps_db()
     while True:
         new_id = str(uuid.uuid4())
         if new_id not in apps.keys():
@@ -33,13 +43,13 @@ def get_unique_uuid():
 
 @server.route('/apps', methods=['GET'])
 def get_apps():
-    return open_apps_data()
+    return open_apps_db()
 
 
 @server.route('/apps', methods=['POST'])
 def post_apps():
     data = request.json
-    apps = open_apps_data()
+    apps = open_apps_db()
 
     gen_id = get_unique_uuid()
 
@@ -54,7 +64,7 @@ def post_apps():
         "updatedAt": datetime.now(timezone.utc).isoformat()
     }
 
-    save_apps(apps)
+    save_apps_db(apps)
 
     return jsonify({
         "id": gen_id,
@@ -64,7 +74,7 @@ def post_apps():
 
 @server.route('/apps/<string:app_id>', methods=['GET'])
 def get_app(app_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
     app = apps.get(app_id)
     if app:
         return jsonify(app)
@@ -76,12 +86,12 @@ def get_app(app_id):
 
 @server.route('/apps/<string:app_id>', methods=['DELETE'])
 def delete_app(app_id):
-    apps = open_apps_data()
-    if app_id not in open_apps_data():
+    apps = open_apps_db()
+    if app_id not in open_apps_db():
         return jsonify({"message": "Application non trouvée"}), 404
 
     apps.pop(app_id)
-    save_apps(apps)
+    save_apps_db(apps)
     return jsonify({
         "id": app_id,
         "message": "Application supprimée avec succès"
@@ -90,7 +100,7 @@ def delete_app(app_id):
 
 @server.route('/apps/<string:app_id>', methods=['PATCH'])
 def patch_app(app_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
     if app_id not in apps:
         return jsonify({"message": "Non trouvé"}), 404
 
@@ -104,7 +114,7 @@ def patch_app(app_id):
         "updatedAt": datetime.now(timezone.utc).isoformat()
     })
 
-    save_apps(apps)
+    save_apps_db(apps)
     return jsonify({
         "id": app_id,
         "message": "Application modifiée",
@@ -113,7 +123,7 @@ def patch_app(app_id):
 
 @server.route('/apps/<string:app_id>/versions', methods=['GET'])
 def get_versions(app_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
 
 @server.route('/apps/<string:app_id>/versions', methods=['POST'])
 def post_versions(app_id):
@@ -121,15 +131,15 @@ def post_versions(app_id):
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['GET'])
 def get_version(app_id, version_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['PATCH'])
 def patch_version(app_id, version_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['DELETE'])
 def delete_version(app_id, version_id):
-    apps = open_apps_data()
+    apps = open_apps_db()
 
 
 if __name__ == '__main__':
