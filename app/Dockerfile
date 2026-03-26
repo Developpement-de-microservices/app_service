@@ -5,8 +5,8 @@ LABEL description="Microservice for the management of apps and their versions."
 LABEL service="app_service"
 
 WORKDIR /app_service/app
-COPY requirements.txt .
-COPY app.py .
+COPY app/requirements.txt .
+COPY app/app.py .
 
 RUN pip install -r requirements.txt
 
