@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
-
+from functools import wraps
+import requests
 import uuid
 from flask import Flask, request, jsonify
 import os
@@ -10,6 +11,30 @@ server = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 APPS_DB_FILE = os.path.join(BASE_DIR, 'data', 'apps.json')
 VERSIONS_DB_FILE = os.path.join(BASE_DIR, 'data', 'versions.json')
+
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+
+        if not token:
+            return jsonify({"error": "Token manquant"}), 401
+
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
+            # Appel au proxy d'authentification
+            response = requests.post("http://proxy/auth/verify", headers=headers, timeout=5)
+
+            if response.status_code != 200:
+                return jsonify({"error": "Non autorisé"}), 401
+
+        except requests.RequestException:
+            return jsonify({"error": "Impossible de vérifier le token, vérifiez l'API /auth"}), 503
+
+        return f(*args, **kwargs)
+
+    return decorated
 
 def open_apps_db():
     try:
@@ -43,11 +68,13 @@ def get_unique_uuid():
 
 
 @server.route('/apps', methods=['GET'])
+@require_auth
 def get_apps():
     return jsonify(open_apps_db()), 200
 
 
 @server.route('/apps', methods=['POST'])
+@require_auth
 def post_apps():
     data = request.json
     if not data:
@@ -77,6 +104,7 @@ def post_apps():
 
 
 @server.route('/apps/<string:app_id>', methods=['GET'])
+@require_auth
 def get_app(app_id):
     apps = open_apps_db()
     app = apps.get(app_id)
@@ -89,6 +117,7 @@ def get_app(app_id):
 
 
 @server.route('/apps/<string:app_id>', methods=['DELETE'])
+@require_auth
 def delete_app(app_id):
     apps = open_apps_db()
     versions = open_versions_db()
@@ -110,6 +139,7 @@ def delete_app(app_id):
 
 
 @server.route('/apps/<string:app_id>', methods=['PATCH'])
+@require_auth
 def patch_app(app_id):
     apps = open_apps_db()
     if app_id not in apps:
@@ -136,6 +166,7 @@ def patch_app(app_id):
     }), 200
 
 @server.route('/apps/<string:app_id>/versions', methods=['GET'])
+@require_auth
 def get_versions(app_id):
     apps = open_apps_db()
     versions = open_versions_db()
@@ -151,6 +182,7 @@ def get_versions(app_id):
 
 
 @server.route('/apps/<string:app_id>/versions', methods=['POST'])
+@require_auth
 def post_versions(app_id):
     data = request.json
     if not data:
@@ -187,6 +219,7 @@ def post_versions(app_id):
     }), 201
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['GET'])
+@require_auth
 def get_version(app_id, version_id):
     apps = open_apps_db()
     versions = open_versions_db()
@@ -206,6 +239,7 @@ def get_version(app_id, version_id):
 
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['PATCH'])
+@require_auth
 def patch_version(app_id, version_id):
     apps = open_apps_db()
     versions = open_versions_db()
@@ -244,6 +278,7 @@ def patch_version(app_id, version_id):
     }), 200
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['DELETE'])
+@require_auth
 def delete_version(app_id, version_id):
     versions = open_versions_db()
 
