@@ -8,8 +8,8 @@ import json
 server = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-APPS_DB_FILE = os.path.join(BASE_DIR, 'apps.json')
-VERSIONS_DB_FILE = os.path.join(BASE_DIR, 'versions.json')
+APPS_DB_FILE = os.path.join(BASE_DIR, 'data', 'apps.json')
+VERSIONS_DB_FILE = os.path.join(BASE_DIR, 'data', 'versions.json')
 
 def open_apps_db():
     try:
