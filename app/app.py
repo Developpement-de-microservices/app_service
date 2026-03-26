@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from functools import wraps
+from flask_cors import CORS
 import requests
 import uuid
 from flask import Flask, request, jsonify
@@ -11,6 +12,8 @@ server = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 APPS_DB_FILE = os.path.join(BASE_DIR, 'data', 'apps.json')
 VERSIONS_DB_FILE = os.path.join(BASE_DIR, 'data', 'versions.json')
+
+CORS(server)
 
 
 def require_auth(f):
