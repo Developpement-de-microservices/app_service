@@ -102,7 +102,8 @@ def post_apps():
 
     return jsonify({
         "id": gen_id,
-        "message": "Application ajoutée avec succès"
+        "message": "Application ajoutée avec succès",
+        "app": apps[gen_id]
     }), 201
 
 
@@ -218,7 +219,8 @@ def post_versions(app_id):
     return jsonify({
         "id": gen_id,
         "applicationId": app_id,
-        "message": "Version ajoutée avec succès"
+        "message": "Version ajoutée avec succès",
+        "version": versions[app_id][gen_id]
     }), 201
 
 @server.route('/apps/<string:app_id>/versions/<string:version_id>', methods=['GET'])
@@ -303,6 +305,14 @@ def delete_version(app_id, version_id):
         "message": "Version supprimée avec succès"
     }), 200
 
+@server.route("/apps/health", methods=["GET"])
+def get_health_apps():
+    response = {
+        "status": "ok",
+        "service": "Apps",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    return jsonify(response), 200
 
 if __name__ == '__main__':
     server.run(host='0.0.0.0', port=5001, debug=True)

@@ -8,6 +8,8 @@ WORKDIR /app_service/app
 COPY app/requirements.txt .
 COPY app/app.py .
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 RUN pip install -r requirements.txt
 
 EXPOSE 5001
