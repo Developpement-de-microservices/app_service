@@ -4,7 +4,7 @@ LABEL maintainer="Florent L. <59474408+flo-lec@users.noreply.github.com>"
 LABEL description="Microservice for the management of apps and their versions."
 LABEL service="app_service"
 
-WORKDIR /app_service/app
+WORKDIR /app
 COPY app/requirements.txt .
 COPY app/app.py .
 
