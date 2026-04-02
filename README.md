@@ -1,14 +1,14 @@
 # 🚀 Service de Gestion d'Applications (App Management API)
 
-Microservice **Python 3.11** haute performance dédié à la centralisation des catalogues d'applications et au suivi de leur cycle de vie (versioning). Conçu pour une intégration native en environnement conteneurisé.
+Microservice **Python 3.14** haute performance dédié à la centralisation des catalogues d'applications et au suivi de leur cycle de vie (versioning). Conçu pour une intégration native en environnement conteneurisé.
 
 ---
 
 ## ✨ Fonctionnalités Clés
 * **Gestion granulaire (CRUD)** : Contrôle total sur les entités "Applications" et "Versions".
-* **Persistance Fluide** : Stockage asynchrone dans des fichiers JSON localisés dans `/app/data`.
-* **Identifiants Robustes** : Utilisation de UUID pour garantir l'unicité globale des ressources.
-* **Empreinte Optimisée** : Image basée sur `python:3.11-slim` pour minimiser la surface d'attaque et le temps de déploiement.
+* **Persistance Fluide** : Stockage asynchrone dans les conteneurs MongoDB.
+* **Identifiants Robustes** : Utilisation d'ID de MongoDB pour garantir l'unicité globale des ressources.
+* **Empreinte Optimisée** : Image basée sur `python:3.14-alpine3.23` pour minimiser la surface d'attaque et le temps de déploiement.
 
 ---
 
@@ -56,17 +56,17 @@ Le service expose un point de terminaison de santé conforme aux exigences de [F
 ---
 
 ## 🛠 Détails Techniques & Maintenance
-* **Image de base** : `python:3.11-slim`
+* **Image de base** : `python:3.14-alpine3.23`
 * **Maintainer** : Florent L. (`flo-lec`)
 * **Service Label** : `app_service`
 * **Port d'exposition** : `5001`
-* **Librairies majeures** : Flask-CORS, `requests`, `uuid`.
+* **Librairies majeures** : `Flask-CORS`, `requests`, `pymongo`.
 
 ### Schéma de données (Exemple)
 ```json
 {
-    "id": "e4e9f738-9b4a-4a2e-8c3d-1a2b3c4d5e6f",
-    "applicationId": "app-uuid-123",
+    "_id": "mongo-id-format",
+    "applicationId": "mongo-id-123",
     "status": "PUBLISHED",
     "version": "2.1.0-stable",
     "changelog": "Correction des bugs mineurs et optimisation SQL.",
