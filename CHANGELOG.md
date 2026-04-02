@@ -2,6 +2,17 @@
 
 Toutes les modifications notables de ce projet seront documentées dans ce fichier.
 
+## [2.0] - 02/04/2026
+### Added
+- Implémentation de MongoDB
+
+### Changed
+- Suppression du fonctionnement de DB en JSON au profit de MongoDB
+- Image allégée à l'aide d'une version basée sur alpine
+
+### Fixed
+- N/A
+
 ## [1.0] - 31/03/2026
 ### Added
 - L'ensemble des fichiers source du microservice se trouve dans le dossier app
