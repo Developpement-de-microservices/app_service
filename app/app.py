@@ -246,7 +246,7 @@ def delete_version(app_id, version_id):
 def get_health_apps():
     return jsonify({
         "status": "ok",
-        "service": "Apps-MongoDB",
+        "service": "Apps",
         "timestamp": datetime.now(timezone.utc).isoformat()
     }), 200
 
